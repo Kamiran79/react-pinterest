@@ -9,6 +9,11 @@ class Auth extends React.Component {
     firebase.auth().signInWithPopup(googleProvider);
   }
 
+  logoutClickEvent = (e) => {
+    e.preventDefault();
+    firebase.auth().signOut();
+  }
+
   render() {
     return (
       <div className="Auth">
