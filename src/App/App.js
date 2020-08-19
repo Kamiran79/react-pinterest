@@ -5,8 +5,8 @@ import 'firebase/auth';
 import firebaseApp from '../helpers/data/connection';
 
 import MyNavbar from '../components/MyNavbar/MyNavbar';
-import Auth from '../components/Auth/Auth';
 import BoardContainer from '../components/BoardContainer/BoardContainer';
+import SingleBoard from '../components/SingleBoard/SingleBoard';
 
 import './App.scss';
 
@@ -15,6 +15,7 @@ firebaseApp();
 class App extends React.Component {
   state = {
     authed: false,
+    singleBoardId: '',
   }
 
   componentDidMount() {
@@ -31,20 +32,28 @@ class App extends React.Component {
     this.removeListener();
   }
 
+  setSingleBoard = (singleBoardId) => {
+    this.setState({ singleBoardId });
+  }
+
   render() {
-    const { authed } = this.state;
+    const { authed, singleBoardId } = this.state;
 
     const loadComponent = () => {
-      if (authed) {
-        return <BoardContainer />;
+      if (authed && singleBoardId.length === 0) {
+        return <BoardContainer setSingleBoard={this.setSingleBoard}/>;
       }
 
-      return <Auth />;
+      if (authed && singleBoardId.length > 0) {
+        return <SingleBoard boardId={singleBoardId} setSingleBoard={this.setSingleBoard}/>;
+      }
+
+      return '';
     };
 
     return (
       <div className="App">
-        <MyNavbar />
+        <MyNavbar authed={authed} />
         <h2>INSIDE APP COMPONENT</h2>
         <button className="btn btn-info">
           <i className="fab fa-pinterest-p"></i> I am a button <i className="fab fa-pinterest-p"></i>
