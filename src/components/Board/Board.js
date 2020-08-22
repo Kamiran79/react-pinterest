@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import pinsData from '../../helpers/data/pinsData';
 import boardShape from '../../helpers/propz/boardShape';
 
 class Board extends React.Component {
@@ -9,13 +10,28 @@ class Board extends React.Component {
     setSingleBoard: PropTypes.func.isRequired,
   }
 
+  state = {
+    pinsLength: 0,
+  }
+
   singleBoardEvent = (e) => {
     e.preventDefault();
     const { board, setSingleBoard } = this.props;
     setSingleBoard(board.id);
   }
 
+  componentDidMount() {
+    const { board } = this.props;
+    pinsData.getPinsByBoardId(board.id)
+      .then((res) => {
+        const pinsLength = res.length;
+        this.setState({ pinsLength });
+      })
+      .catch((err) => console.warn('broke to get pins length', err));
+  }
+
   render() {
+    const { pinsLength } = this.state;
     const { board } = this.props;
     return (
       <div className="card text-center">
@@ -31,7 +47,7 @@ class Board extends React.Component {
           </p>
           <button className="btn btn-secondary" onClick={this.singleBoardEvent}>View Board Details</button>
         </div>
-        <div className="card-footer text-muted">2 days ago</div>
+    <div className="card-footer text-muted">Pins: {pinsLength}</div>
       </div>
     );
   }
