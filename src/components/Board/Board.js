@@ -8,6 +8,7 @@ class Board extends React.Component {
   static propTypes = {
     board: boardShape.boardShape,
     setSingleBoard: PropTypes.func.isRequired,
+    deleteBoard: PropTypes.func.isRequired,
   }
 
   state = {
@@ -30,6 +31,12 @@ class Board extends React.Component {
       .catch((err) => console.warn('broke to get pins length', err));
   }
 
+  deleteBoardEvent = (e) => {
+    e.preventDefault();
+    const { board, deleteBoard } = this.props;
+    deleteBoard(board.id);
+  }
+
   render() {
     const { pinsLength } = this.state;
     const { board } = this.props;
@@ -45,7 +52,8 @@ class Board extends React.Component {
             <i className={board.faClassName}></i>
             <i className={board.faClassName}></i>
           </p>
-          <button className="btn btn-secondary" onClick={this.singleBoardEvent}>View Board Details</button>
+          <button className="btn btn-secondary mr-1" onClick={this.singleBoardEvent}>View Board Details</button>
+          <button className="btn btn-danger" onClick={this.deleteBoardEvent}>Delete Board</button>
         </div>
     <div className="card-footer text-muted">Pins: {pinsLength}</div>
       </div>
