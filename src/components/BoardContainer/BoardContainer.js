@@ -19,7 +19,6 @@ class BoardContainer extends React.Component {
     boardsData.getBoardsByUid(authData.getUid())
       .then((boards) => {
         this.setState({ boards });
-        console.warn('board Data: ', boards);
       })
       .catch((err) => console.error('get boards broke!!', err));
   }
@@ -33,7 +32,7 @@ class BoardContainer extends React.Component {
     return (
       <div>
         <h2>BoardContainer Here</h2>
-        <div className="card=columns">
+        <div className="card-columns">
           {boardCard}
         </div>
       </div>
