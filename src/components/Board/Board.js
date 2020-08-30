@@ -9,6 +9,7 @@ class Board extends React.Component {
     board: boardShape.boardShape,
     setSingleBoard: PropTypes.func.isRequired,
     deleteBoard: PropTypes.func.isRequired,
+    editAboard: PropTypes.func.isRequired,
   }
 
   state = {
@@ -37,14 +38,20 @@ class Board extends React.Component {
     deleteBoard(board.id);
   }
 
+  editBoardEvent = (e) => {
+    e.preventDefault();
+    const { board, editABoard } = this.props;
+    editABoard(board);
+  }
+
   render() {
     const { pinsLength } = this.state;
     const { board } = this.props;
     return (
       <div className="card text-center">
-        <div className="card-header"><h5>{board.boardTitle}</h5></div>
+        <div className="card-header"><h5>{board.name}</h5></div>
         <div className="card-body">
-          { /* <p className="card-title">{board.description}</p> */ }
+          <p className="card-title">{board.description}</p>
           <p className="card-text">
             <i className={board.faClassName}></i>
             <i className={board.faClassName}></i>
@@ -52,8 +59,10 @@ class Board extends React.Component {
             <i className={board.faClassName}></i>
             <i className={board.faClassName}></i>
           </p>
-          <button className="btn btn-secondary mr-1" onClick={this.singleBoardEvent}>View Board Details</button>
-          <button className="btn btn-danger" onClick={this.deleteBoardEvent}>Delete Board</button>
+          <button className="btn btn-secondary mr-1" onClick={this.singleBoardEvent}><i className="fas fa-eye"></i></button>
+          <button className="btn btn-warning" onClick={this.editBoardEvent}><i className="far fa-edit"></i></button>
+          <br/>
+          <button className="btn btn-danger mt-1" onClick={this.deleteBoardEvent}>Delete Board</button>
         </div>
     <div className="card-footer text-muted">Pins: {pinsLength}</div>
       </div>

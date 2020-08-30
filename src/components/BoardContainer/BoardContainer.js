@@ -16,57 +16,63 @@ class BoardContainer extends React.Component {
   state = {
     boards: [],
     formOpen: false,
+    editBoard: {},
   }
 
-  goGetYoBoards = () => {
+  getBoards = () => {
     boardsData.getBoardsByUid(authData.getUid())
-      .then((boards) => {
-        this.setState({ boards });
-      })
+      .then((boards) => this.setState({ boards }))
       .catch((err) => console.error('get boards broke!!', err));
   };
 
+  componentDidMount() {
+    this.getBoards();
+  }
+
   deleteBoard = (boardId) => {
     smash.totallyRemoveBoard(boardId)
-      .then(() => this.goGetYoBoards())
-      .catch((err) => console.error('delete board faild', err));
-  };
-
-  componentDidMount() {
-    this.goGetYoBoards();
+      .then(() => this.getBoards())
+      .catch((err) => console.error(err));
   }
 
   createBoard = (newBoard) => {
     boardsData.createBoard(newBoard)
       .then(() => {
-        this.goGetYoBoards();
+        this.getBoards();
         this.setState({ formOpen: false });
       })
       .catch((err) => console.error('Create Board Broke', err));
   }
 
+  editABoard = (boardToEdit) => {
+    this.setState({ formOpen: true, editBoard: boardToEdit });
+  }
+
+  updateBoard = (boardId, editedBoard) => {
+    boardsData.updateBoard(boardId, editedBoard)
+      .then(() => {
+        this.getBoards();
+        this.setState({ formOpen: false, editBoard: {} });
+      })
+      .catch((err) => console.error('Update Board Borked', err));
+  }
+
+  closeForm = () => {
+    this.setState({ formOpen: false });
+  }
+
   render() {
-    const { boards, formOpen } = this.state;
+    const { boards, formOpen, editBoard } = this.state;
     const { setSingleBoard } = this.props;
 
-    const boardCard = boards.map((board) => <Board key={board.id} board={board} setSingleBoard={setSingleBoard} deleteBoard={this.deleteBoard}/>);
-    /*
-    const loadBoardFormButton = () => {
-      if (formOpen) {
-        return <i className="far fa-plus-square"></i>;
-      }
+    const boardCard = boards.map((board) => <Board key={board.id} board={board} setSingleBoard={setSingleBoard} deleteBoard={this.deleteBoard} editABoard={this.editABoard}/>);
 
-      return <i class="far fa-window-close"></i>;
-    };
-    */
     return (
       <div>
-        <button className="btn btn-warning" onClick={() => {
-          this.setState({ formOpen: !formOpen });
-        }}
-        >{formOpen ? <i className="btn-danger far fa-window-close"></i> : <i className="far fa-plus-square"></i> }</button>
-        { formOpen ? <BoardForm createBoard={this.createBoard}/> : '' }
-        {/* <h2>BoardContainer Here</h2> */}
+        <div className="mb-3">
+          {!formOpen ? <button className="btn btn-warning" onClick={() => { this.setState({ formOpen: true, editBoard: {} }); }}><i className='far fa-plus-square'></i></button> : '' }
+          {formOpen ? <BoardForm createBoard={this.createBoard} boardThatIAmEditing={editBoard} updateBoard={this.updateBoard} closeForm={this.closeForm}/> : ''}
+        </div>
         <div className="card-columns">
           {boardCard}
         </div>
@@ -76,3 +82,20 @@ class BoardContainer extends React.Component {
 }
 
 export default BoardContainer;
+
+/*
+
+my old div was working had issue with edit have to change it
+
+      <div>
+        <button className="btn btn-success" onClick={() => {
+          this.setState({ formOpen: !formOpen });
+        }}
+        >{formOpen ? <i className="btn-danger far fa-window-close"></i> : <i className="far fa-plus-square"></i> }</button>
+        { formOpen ? <BoardForm createBoard={this.createBoard} boardThatIAmEditing={editBoard} updateBoard={this.updateBoard}/> : '' }
+        {/* <h2>BoardContainer Here</h2> }
+        <div className="card-columns">
+          {boardCard}
+        </div>
+      </div>
+*/
